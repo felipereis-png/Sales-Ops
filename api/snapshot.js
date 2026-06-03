@@ -140,14 +140,7 @@ async function fetchOwners() {
 
 function resolveAmount(props) {
   const raw = parseFloat(props.amount || "0") || 0;
-  if (raw <= 1) {
-    const plan = (props.type_of_plan || "").toLowerCase();
-    let matched = null;
-    for (const key of Object.keys(PRICE_FALLBACK)) {
-      if (plan.includes(key) || key.includes(plan)) { matched = key; break; }
-    }
-    return [PRICE_FALLBACK[matched] ?? PRICE_FALLBACK_DEFAULT, true];
-  }
+  if (raw <= 1) return [0, false];
   return [raw, false];
 }
 

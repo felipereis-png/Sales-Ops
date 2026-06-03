@@ -117,15 +117,7 @@ def resolve_amount(props):
         amount = 0.0
 
     if amount <= 1:
-        plan_raw = (props.get("type_of_plan") or "").lower().strip()
-        # Fuzzy match
-        matched = None
-        for key in PRICE_FALLBACK:
-            if key in plan_raw or plan_raw in key:
-                matched = key
-                break
-        fallback_price = PRICE_FALLBACK.get(matched, PRICE_FALLBACK_DEFAULT)
-        return fallback_price, True
+        return 0.0, False
 
     return amount, False
 
