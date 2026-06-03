@@ -824,13 +824,8 @@ function buildUI(d) {
   document.getElementById('sync-status').textContent =
     '✅ HubSpot · ' + new Date(d.generated_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-  // Pré-preenche inputs: primeiro dia do mês vigente → hoje
-  const today = new Date();
-  const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10);
-  const fromEl = document.getElementById('date-from');
-  const toEl   = document.getElementById('date-to');
-  if (fromEl) fromEl.value = firstOfMonth;
-  if (toEl)   toEl.value   = today.toISOString().slice(0, 10);
+  // Garante que os inputs estão no período correto (pode já ter sido setado pela auth)
+  initDateInputs();
 
   renderSegChart(d.segments);
 
@@ -3759,6 +3754,17 @@ async function sha256(str) {
 const AUTH_CACHE_KEY = 'moveo_auth_v2';
 const AUTH_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 1 semana em ms
 
+function initDateInputs() {
+  const t = new Date();
+  const y = t.getFullYear();
+  const m = String(t.getMonth() + 1).padStart(2, '0');
+  const d = String(t.getDate()).padStart(2, '0');
+  const fromEl = document.getElementById('date-from');
+  const toEl   = document.getElementById('date-to');
+  if (fromEl) fromEl.value = `${y}-${m}-01`;
+  if (toEl)   toEl.value   = `${y}-${m}-${d}`;
+}
+
 async function doLogin() {
   const pwd = document.getElementById('login-input').value;
   const hash = await sha256(pwd);
@@ -3766,6 +3772,7 @@ async function doLogin() {
     localStorage.setItem(AUTH_CACHE_KEY, JSON.stringify({ hash, exp: Date.now() + AUTH_CACHE_TTL }));
     document.getElementById('login-gate').style.display = 'none';
     document.getElementById('app-wrap').style.display = '';
+    initDateInputs();
     init();
   } else {
     const err = document.getElementById('login-err');
@@ -3781,6 +3788,7 @@ async function doLogin() {
     if (cached && cached.hash === AUTH_HASH && cached.exp > Date.now()) {
       document.getElementById('login-gate').style.display = 'none';
       document.getElementById('app-wrap').style.display = '';
+      initDateInputs();
       init();
       return;
     }
