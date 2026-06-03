@@ -1,0 +1,14 @@
+{
+  "framework": null,
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/", "destination": "/dashboard/index.html" },
+    { "source": "/dashboard", "destination": "/dashboard/index.html" }
+  ],
+  "functions": {
+    "api/snapshot.js":  { "maxDuration": 60 },
+    "api/storage.js":   { "maxDuration": 15 },
+    "api/campaigns.js": { "maxDuration": 60 }
+  }
+}
